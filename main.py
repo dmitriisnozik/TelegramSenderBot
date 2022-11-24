@@ -13,7 +13,7 @@ import telebot
 import os.path
 from datetime import datetime
 
-#Data folder creation
+# Data folder creation
 try:
     os.mkdir('data')
 except Exception:
