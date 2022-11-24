@@ -73,7 +73,7 @@ class InputWindow(QWidget):
         self.ui.tokenhelp.clicked.connect(self.open_help)
 
     def open_help(self):
-        token_help.show()
+        TokenHelp.show()
     
     def submit(self):
         token_file_text = self.ui.widgetLineEdit.text()
@@ -84,9 +84,9 @@ class InputWindow(QWidget):
 
 
 # Help window
-class helpWindow(QWidget):
+class HelpWindow(QWidget):
     def __init__(self):
-        super(helpWindow, self).__init__()
+        super(HelpWindow, self).__init__()
         self.ui = Ui_help()
         self.ui.setupUi(self)
         QFontDatabase.addApplicationFont("fonts/Century-Gothic.ttf")
@@ -98,27 +98,27 @@ class helpWindow(QWidget):
 
 
 # Text formatting hints
-class hintsWindow(QWidget):
+class HintsWindow(QWidget):
     def __init__(self):
-        super(hintsWindow, self).__init__()
+        super(HintsWindow, self).__init__()
         self.ui = Ui_hints()
         self.ui.setupUi(self)
         QFontDatabase.addApplicationFont("fonts/Century-Gothic.ttf")
 
 
 # Token help window (what token is)
-class tokenHelp(QWidget):
+class TokenHelp(QWidget):
     def __init__(self):
-        super(tokenHelp, self).__init__()
+        super(TokenHelp, self).__init__()
         self.ui = Ui_tokenhelpform()
         self.ui.setupUi(self)
         QFontDatabase.addApplicationFont("fonts/Century-Gothic.ttf")
 
 
 # Signature edit window
-class SignatureEdit(QWidget):
+class signature_edit(QWidget):
     def __init__(self):
-        super(SignatureEdit, self).__init__()
+        super(signature_edit, self).__init__()
         self.ui = Ui_signatureform()
         self.ui.setupUi(self)
 
@@ -183,7 +183,7 @@ class SignatureEdit(QWidget):
             self.ui.channel_select.insertItem(86400, list_name[i])
 
     def clicked_save(self):
-        signatureedit.close()
+        signature_edit.close()
 
 
 # Main menu
@@ -280,7 +280,6 @@ class Main(QMainWindow):
         doc_text = doc_text[1].split('/')  # Extracting document name
         self.ui.image_input.setText('File selected')  # Change button text
         self.ui.selected_.setText(f'Doc: {doc_text[-1]}')  # Showing selected document name
-        print(doc_path)
 
     def open_image(self):
         imagefilename = QFileDialog.getOpenFileName()
@@ -307,7 +306,7 @@ class Main(QMainWindow):
         self.ui.ch_amount.setText(f'Amount: {len(channel_name)}')  # Change text of channel counter
 
     def message_sign(self):
-        signatureedit.show()
+        signature_edit.show()
 
     def help_open(self):
         help.show()
@@ -357,10 +356,10 @@ if __name__ == '__main__':
     
     widget = InputWindow()
     window = Main()
-    signatureedit = SignatureEdit()
-    help = helpWindow()
-    hints = hintsWindow()
-    token_help = tokenHelp()
+    signature_edit = signature_edit()
+    help = HelpWindow()
+    hints = HintsWindow()
+    token_help = TokenHelp()
 
     token_file = open('data/temp_token.txt')
     if ':' not in token_file.read():  # Make sure if bot token in data
