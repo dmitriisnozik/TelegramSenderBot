@@ -28,23 +28,15 @@ def open_storage(path):
         open(path, 'w').write('')
 
 
-# Token storage creation
+# Data storage files check/creation
 open_storage('data/temp_token.txt')
+open_storage('data/temp_message.txt')
+open_storage('data/temp_channels.txt')
+open_storage('data/temp_signature.txt')
+open_storage('data/signature_keys.txt')
 
 # Token
 bot = telebot.TeleBot(open('data/temp_token.txt').read())
-
-# Message
-open_storage('data/temp_message.txt')
-
-# Channel list storage
-open_storage('data/temp_channels.txt')
-
-# Signature storage
-open_storage('data/temp_signature.txt')
-
-# Keys storage
-open_storage('data/signature_keys.txt')
 
 
 # Token input/change window
