@@ -19,45 +19,32 @@ try:
 except Exception:
     pass
 
+
+# Storage opening/creating function
+def open_storage(path):
+    try:
+        open(path)
+    except Exception:
+        open(path, 'w').write('')
+
+
 # Token storage creation
-try:
-    token_r = open('data/temp_token.txt')
-except Exception: 
-    token_c = open('data/temp_token.txt', 'w')
-    token_c.write('default')
-    token_r = open('data/temp_token.txt')
+open_storage('data/temp_token.txt')
 
 # Token
-bot = telebot.TeleBot(token_r.read())
+bot = telebot.TeleBot(open('data/temp_token.txt').read())
 
 # Message
-message_c = open('data/temp_message.txt', 'w')
+open_storage('data/temp_message.txt')
 
 # Channel list storage
-try: 
-    channels_r = open('data/temp_channels.txt')
-except Exception:
-    channels_c = open('data/temp_channels.txt', 'w')
-    channels_c.write('default')
-    channels_r = open('data/temp_channels.txt')
+open_storage('data/temp_channels.txt')
 
 # Signature storage
-try: 
-    sign_r = open('data/temp_signature.txt')
-    open('data/signaturedata.txt')
-except Exception:
-    open('data/signaturedata.txt', 'w').write('')
-    sign_c = open('data/temp_signature.txt', 'w')
-    sign_c.write('')
-    sign_r = open('data/temp_signature.txt')
+open_storage('data/temp_signature.txt')
 
 # Keys storage
-try: 
-    keys_r = open('data/signature_keys.txt')
-except Exception:
-    keys_c = open('data/signature_keys.txt', 'w')
-    keys_c.write('')
-    keys_r = open('data/signature_keys.txt')
+open_storage('data/signature_keys.txt')
 
 
 # Token input/change window
@@ -73,7 +60,7 @@ class InputWindow(QWidget):
         self.ui.tokenhelp.clicked.connect(self.open_help)
 
     def open_help(self):
-        TokenHelp.show()
+        token_help.show()
     
     def submit(self):
         token_file_text = self.ui.widgetLineEdit.text()
@@ -116,9 +103,9 @@ class TokenHelp(QWidget):
 
 
 # Signature edit window
-class signature_edit(QWidget):
+class SignatureEdit(QWidget):
     def __init__(self):
-        super(signature_edit, self).__init__()
+        super(SignatureEdit, self).__init__()
         self.ui = Ui_signatureform()
         self.ui.setupUi(self)
 
@@ -267,33 +254,33 @@ class Main(QMainWindow):
 
     # Menu buttons
     def open_text(self):
-        textfilename = QFileDialog.getOpenFileName()
+        text_file_name = QFileDialog.getOpenFileName()
         global text_path 
-        text_path = open(textfilename[0], encoding='UTF-8')
+        text_path = open(text_file_name[0], encoding='UTF-8')
         self.ui.text_show.insertPlainText(text_path.read())  # Showing message in message field
 
     def select_document(self):
-        docfilename = QFileDialog.getOpenFileName()
+        doc_file_name = QFileDialog.getOpenFileName()
         global doc_path
-        doc_path = open(docfilename[0])
+        doc_path = open(doc_file_name[0])
         doc_text = str(doc_path).split('\'')
         doc_text = doc_text[1].split('/')  # Extracting document name
         self.ui.image_input.setText('File selected')  # Change button text
         self.ui.selected_.setText(f'Doc: {doc_text[-1]}')  # Showing selected document name
 
     def open_image(self):
-        imagefilename = QFileDialog.getOpenFileName()
+        image_file_name = QFileDialog.getOpenFileName()
         global image_path
-        image_path = open(imagefilename[0])
+        image_path = open(image_file_name[0])
         image_text = str(image_path).split('\'')
         image_text = image_text[1].split('/')  # Extracting image name
         self.ui.image_input.setText('File selected')  # Change button text
         self.ui.selected_.setText(f'Img: {image_text[-1]}')  # Showing selected image name
 
     def open_list(self):
-        listfilename = QFileDialog.getOpenFileName()
+        list_file_name = QFileDialog.getOpenFileName()
         global list_path
-        list_path = open(listfilename[0])
+        list_path = open(list_file_name[0])
         channel_name = (list_path.read())
         channel_name = channel_name.replace('\n', ' ')
         channel_name = channel_name.replace('  ', ' ')
@@ -309,7 +296,7 @@ class Main(QMainWindow):
         signature_edit.show()
 
     def help_open(self):
-        help.show()
+        help_.show()
 
     def close_(self):
         window.close()
@@ -356,8 +343,8 @@ if __name__ == '__main__':
     
     widget = InputWindow()
     window = Main()
-    signature_edit = signature_edit()
-    help = HelpWindow()
+    signature_edit = SignatureEdit()
+    help_ = HelpWindow()
     hints = HintsWindow()
     token_help = TokenHelp()
 
