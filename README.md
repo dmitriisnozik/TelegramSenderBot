@@ -1,6 +1,6 @@
-Telegram Sender Bot is a TeleBot telegram bot that sending messages with or withoud attached files and images.
+# Telegram Sender Bot is a TeleBot telegram bot that sending messages with or withoud attached files and images.
 In this bot you also can add signature which will be added to message depending to channel.
-# Since this bot is my first python project ever, some functions can not working well
+Since this bot is my first python project ever, some functions can not working well
 
 To start sending you should create a new bot account using @BotFather telegram account, that will give you token for further use
 Bot is taking as list of channels input .txt file, where written down all channels separated by space or \n
