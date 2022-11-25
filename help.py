@@ -63,18 +63,11 @@ class Ui_help(object):
 "\n"
 "HTML text formatting is not working with photos\n"
 "\n"
-"Bot can handle only one schedule request, if you need to schedule messages on different time open new bot application\n"
-"\n"
 "List of channels in message settings is not updating, to update list you have to close bot and open again\n"
 "\n"
-"Channels your add (usign file or writing manually) must be separated by space or enter\n"
+"Channels your add (using file or writing manually) must be separated by space or enter\n"
 "\n"
 "To send text withoud photo you should ignore select path button or select not supported file\n"
-"\n"
-"To send message right now you should ingore schedule/delay edit button, or close it without clicking save button\n"
-"\n"
-"Delay between messages means time between two messages since first message sent\n"
-"\n"
-"Schedule means time to send first message", None))
+, None))
     # retranslateUi
 
