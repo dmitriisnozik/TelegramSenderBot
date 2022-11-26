@@ -150,11 +150,9 @@ class SignatureEdit(QWidget):
     # Update list of channels
     def update(self):
         self.ui.channel_select.clear()
-        list_path = open('data/temp_channels.txt')
-        list_name = (list_path.read())
-        list_name = list_name.replace('\n', ' ')
-        list_name = list_name.replace('  ', ' ')
-        data = open('data/temp_channels.txt', 'w').write(list_name)
+        list_name = open('data/temp_channels.txt').read()
+        list_name = list_name.replace('\n', ' ').replace('  ', ' ')
+        open('data/temp_channels.txt', 'w').write(list_name)  # Channel list transformation
         list_name = open('data/temp_channels.txt').read()
         list_name = list_name.split(' ')
         self.ui.channel_select.clear()
@@ -195,9 +193,8 @@ class Main(QMainWindow):
     def launch(self):
         channel_names = open('data/temp_channels.txt')
         global channel_name
-        channel_name = (channel_names.read())
-        channel_name = channel_name.replace('\n', ' ')
-        channel_name = channel_name.replace('  ', ' ')
+        channel_name = channel_names.read()
+        channel_name = channel_name.replace('\n', ' ').replace('  ', ' ')
         channel_name = channel_name.split(' ')  # Extracting channel names
         signature_file = open('data/temp_signature.txt').read()  # Getting signature text
         keys_file = open('data/signature_keys.txt').read()  # Getting channels with signature list
