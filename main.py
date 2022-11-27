@@ -2,13 +2,13 @@
 import sys
 from PyQt6.QtWidgets import QFileDialog
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
+from PySide6.QtGui import QFontDatabase
 from design import Ui_TelegramBot
 from token_input import Ui_Input
 from signature import Ui_signatureform
 from help import Ui_help
 from hints import Ui_hints
 from token_help import Ui_tokenhelpform
-from PySide6.QtGui import QFontDatabase
 import telebot
 import os.path
 from datetime import datetime
@@ -16,7 +16,7 @@ from datetime import datetime
 # Data folder creation
 try:
     os.mkdir('data')
-except Exception:
+except FileExistsError:
     pass
 
 
@@ -24,7 +24,7 @@ except Exception:
 def open_storage(path):
     try:
         open(path)
-    except Exception:
+    except FileNotFoundError:
         open(path, 'w').write('')
 
 
@@ -56,8 +56,7 @@ class InputWindow(QWidget):
     
     def submit(self):
         token_file_text = self.ui.widgetLineEdit.text()
-        token_file = open('data/temp_token.txt', 'w')
-        token_file.write(token_file_text)  # Save token to file
+        open('data/temp_token.txt', 'w').write(token_file_text)  # Save token to file
         window.show()
         widget.close()
 
@@ -111,13 +110,11 @@ class SignatureEdit(QWidget):
         self.ui.clear_button.clicked.connect(self.clicked_clear)
         self.ui.update_button.clicked.connect(self.update)
 
-        list_path = open('data/temp_channels.txt')  # Getting channel names list
-        list_name = (list_path.read())
-        list_name = list_name.replace('\n', ' ').replace('  ', ' ')
+        list_name = (open('data/temp_channels.txt').read()).replace('\n', ' ').replace('  ', ' ')
         list_name = list_name.split(' ')  # Extracting channel names
         self.ui.channel_select.clear()
-        for i in range(len(list_name)):
-            self.ui.channel_select.insertItem(86400, list_name[i])
+        for name in list_name:
+            self.ui.channel_select.insertItem(86400, name)
 
         # Show signatures from list in data
         signature_file = open('data/temp_signature.txt').read()
@@ -135,29 +132,30 @@ class SignatureEdit(QWidget):
             f'{self.ui.channel_select.currentText()} : {self.ui.sign_input.toPlainText()}'
         )
         new_key = self.ui.channel_select.currentText()
-        exist_keys = open('data/signature_keys.txt').read()
-        open('data/signature_keys.txt', 'w').write(exist_keys + ':::' + new_key)
+        open('data/signature_keys.txt', 'a').write(':::' + new_key)
         new_signature = self.ui.sign_input.toPlainText()
-        exist_signatures = open('data/temp_signature.txt', 'r').read()
-        open('data/temp_signature.txt', 'w').write(exist_signatures + ':::' + new_signature)
+        open('data/temp_signature.txt', 'a').write(':::' + new_signature)
 
     # Delete all signatures
     def clicked_clear(self):
         self.ui.read_only.clear()
-        open('data/temp_signature.txt', 'w').write('')
-        open('data/signature_keys.txt', 'w').write('')
+        try:
+            open('data/temp_signature.txt', 'w').write('')
+            open('data/signature_keys.txt', 'w').write('')
+        except FileNotFoundError:
+            open_storage('data/temp_signature.txt')
 
     # Update list of channels
     def update(self):
         self.ui.channel_select.clear()
-        list_name = open('data/temp_channels.txt').read()
-        list_name = list_name.replace('\n', ' ').replace('  ', ' ')
-        open('data/temp_channels.txt', 'w').write(list_name)  # Channel list transformation
-        list_name = open('data/temp_channels.txt').read()
-        list_name = list_name.split(' ')
-        self.ui.channel_select.clear()
-        for i in range(len(list_name)):
-            self.ui.channel_select.insertItem(86400, list_name[i])
+        try:
+            list_name = (open('data/temp_channels.txt').read()).replace('\n', ' ').replace('  ', ' ')
+            open('data/temp_channels.txt', 'w').write(list_name)  # Channel list transformation
+            list_name = (open('data/temp_channels.txt').read()).split(' ')
+            for i in range(len(list_name)):
+                self.ui.channel_select.insertItem(86400, list_name[i])
+        except FileNotFoundError:
+            open_storage('data/temp_channels.txt')
 
     def clicked_save(self):
         signature_edit.close()
@@ -174,8 +172,7 @@ class Main(QMainWindow):
         QFontDatabase.addApplicationFont("fonts/Century-Gothic.ttf")
 
         # Getting bot token from file in data
-        token_str = open('data/temp_token.txt').read()
-        token_str = token_str.split(':')
+        token_str = (open('data/temp_token.txt').read()).split(':')
         self.ui.label_8.setText(f'Current token: {token_str[0]}')
 
         # Buttons description
@@ -191,10 +188,7 @@ class Main(QMainWindow):
 
     # Start sending messages
     def launch(self):
-        channel_names = open('data/temp_channels.txt')
-        global channel_name
-        channel_name = channel_names.read()
-        channel_name = channel_name.replace('\n', ' ').replace('  ', ' ')
+        channel_name = (open('data/temp_channels.txt').read()).replace('\n', ' ').replace('  ', ' ')
         channel_name = channel_name.split(' ')  # Extracting channel names
         signature_file = open('data/temp_signature.txt').read()  # Getting signature text
         keys_file = open('data/signature_keys.txt').read()  # Getting channels with signature list
@@ -207,14 +201,14 @@ class Main(QMainWindow):
         try:
             image_arr = str(image_path).split('\'')
             image = image_arr[1]
-        except Exception:
+        except NameError:
             image = ''
 
         # Making sure if file is selected
         try:
             doc_arr = str(doc_path).split('\'')
             doc = doc_arr[1]
-        except Exception:
+        except NameError:
             doc = ''
 
         message = self.ui.text_show.toPlainText()  # Getting message from field
@@ -244,42 +238,46 @@ class Main(QMainWindow):
     # Menu buttons
     def open_text(self):
         text_file_name = QFileDialog.getOpenFileName()
-        global text_path 
-        text_path = open(text_file_name[0], encoding='UTF-8')
-        self.ui.text_show.insertPlainText(text_path.read())  # Showing message in message field
+        self.ui.text_show.insertPlainText(
+            open(text_file_name[0], encoding='UTF-8').read()
+        )  # Showing message in message field
 
     def select_document(self):
         doc_file_name = QFileDialog.getOpenFileName()
         global doc_path
-        doc_path = open(doc_file_name[0])
-        doc_text = str(doc_path).split('\'')
-        doc_text = doc_text[1].split('/')  # Extracting document name
-        self.ui.image_input.setText('File selected')  # Change button text
-        self.ui.selected_.setText(f'Doc: {doc_text[-1]}')  # Showing selected document name
+        try:
+            doc_path = open(doc_file_name[0])
+            doc_text = str(doc_path).split('\'')
+            doc_text = doc_text[1].split('/')  # Extracting document name
+            self.ui.attach_file.setText('File selected')  # Change button text
+            self.ui.selected_.setText(f'Doc: {doc_text[-1]}')  # Showing selected document name
+        except FileNotFoundError:
+            pass
 
     def open_image(self):
         image_file_name = QFileDialog.getOpenFileName()
         global image_path
-        image_path = open(image_file_name[0])
-        image_text = str(image_path).split('\'')
-        image_text = image_text[1].split('/')  # Extracting image name
-        self.ui.image_input.setText('File selected')  # Change button text
-        self.ui.selected_.setText(f'Img: {image_text[-1]}')  # Showing selected image name
+        try:
+            image_path = open(image_file_name[0])
+            image_text = str(image_path).split('\'')
+            image_text = image_text[1].split('/')  # Extracting image name
+            self.ui.image_input.setText('File selected')  # Change button text
+            self.ui.selected_.setText(f'Img: {image_text[-1]}')  # Showing selected image name
+        except FileNotFoundError:
+            pass
 
     def open_list(self):
         list_file_name = QFileDialog.getOpenFileName()
-        global list_path
-        list_path = open(list_file_name[0])
-        channel_name = (list_path.read())
-        channel_name = channel_name.replace('\n', ' ')
-        channel_name = channel_name.replace('  ', ' ')
-        channels_c = open('data/temp_channels.txt', 'w')  # Saving channel list in temp file in data
-        channels_c.write(channel_name)
-        channel_name = channel_name.split(' ')  # Extracting channel names
-        self.ui.channels_output.clear()
-        for i in range(len(channel_name)):
-            self.ui.channels_output.insertPlainText(f'{channel_name[i]}\n')
-        self.ui.ch_amount.setText(f'Amount: {len(channel_name)}')  # Change text of channel counter
+        try:
+            channel_name = (open(list_file_name[0])).read().replace('\n', ' ').replace('  ', ' ')
+            open('data/temp_channels.txt', 'w').write(channel_name)  # Saving channel list in temp file in data
+            channel_name = channel_name.split(' ')  # Extracting channel names
+            self.ui.channels_output.clear()
+            for i in range(len(channel_name)):
+                self.ui.channels_output.insertPlainText(f'{channel_name[i]}\n')
+            self.ui.ch_amount.setText(f'Amount: {len(channel_name)}')  # Change text of channel counter
+        except FileNotFoundError:
+            pass
 
     def message_sign(self):
         signature_edit.show()
