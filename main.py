@@ -3,12 +3,12 @@ import sys
 from PyQt6.QtWidgets import QFileDialog
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
 from PySide6.QtGui import QFontDatabase
-from design import Ui_TelegramBot
-from token_input import Ui_Input
-from signature import Ui_signatureform
-from help import Ui_help
-from hints import Ui_hints
-from token_help import Ui_tokenhelpform
+from styles.design import Ui_TelegramBot
+from styles.token_input import Ui_Input
+from styles.signature import Ui_signatureform
+from styles.help import Ui_help
+from styles.hints import Ui_hints
+from styles.token_help import Ui_tokenhelpform
 import telebot
 import os.path
 from datetime import datetime
